@@ -324,7 +324,7 @@ lws_tls_server_accept(struct lws *wsi)
 		   wsi, m, errno);
 
 	// mbedtls wrapper only
-	if (m == SSL_ERROR_SYSCALL && errno == 11)
+	if (m == SSL_ERROR_SYSCALL && errno == EAGAIN)
 		return LWS_SSL_CAPABLE_MORE_SERVICE_READ;
 
 #if defined(WIN32)

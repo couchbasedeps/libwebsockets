@@ -310,15 +310,16 @@ int ssl_pm_handshake(SSL *ssl)
 	    ret = 0;
 
     /*
-     * OpenSSL return codes:
-     *   0 = did not complete, but may be retried
+     * OpenSSL SSL_do_handshake() return codes, according to its man page:
+     *   0 = "handshake was not successful but was shut down controlled and by the specifications"
      *   1 = successfully completed
-     *   <0 = death
+     *   <0 = fatal error, _or_ a non-blocking BIO needs to read/write more data
+	 * On a return other than 1, the caller should next call SSL_get_error() to find the reason.
      */
     if (ret == MBEDTLS_ERR_SSL_WANT_READ || ret == MBEDTLS_ERR_SSL_WANT_WRITE) {
-	    ssl->err = ret;
+	    ssl->err = (ret == MBEDTLS_ERR_SSL_WANT_READ) ? SSL_ERROR_WANT_READ : SSL_ERROR_WANT_WRITE;
         SSL_DEBUG(SSL_PLATFORM_ERROR_LEVEL, "mbedtls_ssl_handshake() return -0x%x", -ret);
-        return 0; /* OpenSSL: did not complete but may be retried */
+        return -1;
     }
 
     if (ret == 0) { /* successful */
@@ -328,7 +329,7 @@ int ssl_pm_handshake(SSL *ssl)
         return 1; /* openssl successful */
     }
 
-    if (errno == 11) {
+    if (errno == EAGAIN) {
 	    ssl->err = ret == MBEDTLS_ERR_SSL_WANT_READ;
 
 	    return 0;
