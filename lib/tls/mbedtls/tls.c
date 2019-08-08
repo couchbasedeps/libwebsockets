@@ -38,3 +38,22 @@ lws_context_init_ssl_library(const struct lws_context_creation_info *info)
 
 	return 0;
 }
+
+mbedtls_x509_crt *
+lws_ssl_ctx_get_mbedtls_x509_crt(lws_ssl_ctx *ssl_ctx) {
+	return ssl_ctx_get_mbedtls_x509_crt((SSL_CTX*)ssl_ctx);
+}
+
+int lws_ssl_ctx_set_mbedtls_x509_crt(lws_ssl_ctx *ssl_ctx, mbedtls_x509_crt *crt) {
+	return ssl_ctx_set_mbedtls_x509_crt((SSL_CTX*)ssl_ctx, crt) ? 0 : -1;
+}
+
+mbedtls_pk_context *
+lws_ssl_ctx_get_mbedtls_key(lws_ssl_ctx *ssl_ctx) {
+	return ssl_ctx_get_mbedtls_key((SSL_CTX*)ssl_ctx);
+
+}
+
+int lws_ssl_ctx_set_mbedtls_key(lws_ssl_ctx *ssl_ctx, mbedtls_pk_context *key) {
+    return ssl_ctx_set_mbedtls_key((SSL_CTX*)ssl_ctx, key) ? 0 : -1;
+}

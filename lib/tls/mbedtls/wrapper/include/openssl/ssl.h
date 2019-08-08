@@ -38,6 +38,13 @@
  mbedtls_x509_crt *
  ssl_ctx_get_mbedtls_x509_crt(SSL_CTX *ssl_ctx);
 
+ int ssl_ctx_set_mbedtls_x509_crt(SSL_CTX *ssl_ctx, mbedtls_x509_crt *crt);
+
+ mbedtls_pk_context *
+ ssl_ctx_get_mbedtls_key(SSL_CTX *ssl_ctx);
+
+ int ssl_ctx_set_mbedtls_key(SSL_CTX *ssl_ctx, mbedtls_pk_context *key);
+ 
  mbedtls_x509_crt *
  ssl_get_peer_mbedtls_x509_crt(SSL *ssl);
 

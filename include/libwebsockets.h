@@ -555,6 +555,27 @@ struct lws;
 
 #endif
 
+#if defined(LWS_WITH_MBEDTLS)
+/* SSL/TLS context access, for use with LWS_CALLBACK_OPENSSL_LOAD_EXTRA_CLIENT_VERIFY_CERTS and
+   LWS_CALLBACK_OPENSSL_LOAD_EXTRA_SERVER_VERIFY_CERTS. In these callbacks, the 'user' pointer
+   may be cast to 'lws_ssl_ctx*' and passed to these functions. */
+
+typedef struct lws_ssl_ctx lws_ssl_ctx;
+
+mbedtls_x509_crt *
+lws_ssl_ctx_get_mbedtls_x509_crt(lws_ssl_ctx *ssl_ctx);
+
+// Copies the cert, so you may free it afterwards
+int lws_ssl_ctx_set_mbedtls_x509_crt(lws_ssl_ctx *ssl_ctx, mbedtls_x509_crt *crt);
+
+mbedtls_pk_context *
+lws_ssl_ctx_get_mbedtls_key(lws_ssl_ctx *ssl_ctx);
+
+// Warning: Do not free `key` while the SSL context is still in use!
+int lws_ssl_ctx_set_mbedtls_key(lws_ssl_ctx *ssl_ctx, mbedtls_pk_context *key);
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif

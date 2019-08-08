@@ -355,6 +355,44 @@ ssl_ctx_get_mbedtls_x509_crt(SSL_CTX *ssl_ctx)
 	return x509_pm->x509_crt;
 }
 
+int ssl_ctx_set_mbedtls_x509_crt(SSL_CTX *ssl_ctx, mbedtls_x509_crt *mbed_crt)
+{
+    X509 *x = d2i_X509(NULL, mbed_crt->raw.p, mbed_crt->raw.len);
+    if (!x)
+        return 0;
+    if (!SSL_CTX_use_certificate(ssl_ctx, x)) {
+        X509_free(x);
+        return 0;
+    }
+    return 1;
+}
+
+mbedtls_pk_context *
+ssl_ctx_get_mbedtls_key(SSL_CTX *ctx)
+{
+    EVP_PKEY *pkey = ctx->cert->pkey;
+    if (!pkey)
+        return NULL;
+	struct pkey_pm *pkey_pm = pkey->pkey_pm;
+	if (!pkey_pm)
+		return NULL;
+	return pkey_pm->pkey ? pkey_pm->pkey : pkey_pm->ex_pkey;
+}
+
+int ssl_ctx_set_mbedtls_key(SSL_CTX *ctx, mbedtls_pk_context *mbed_key)
+{
+    EVP_PKEY *pkey = EVP_PKEY_new();
+    if (!pkey)
+        return 0;
+    struct pkey_pm *pkey_pm = pkey->pkey_pm;
+    pkey_pm->ex_pkey = mbed_key;                    // ex_pkey will not be freed
+    if (!SSL_CTX_use_PrivateKey(ctx, pkey)) {
+        EVP_PKEY_free(pkey);
+        return 0;
+    }
+    return 1;
+}
+
 mbedtls_x509_crt *
 ssl_get_peer_mbedtls_x509_crt(SSL *ssl)
 {
