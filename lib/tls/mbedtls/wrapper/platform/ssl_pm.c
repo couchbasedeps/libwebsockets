@@ -727,7 +727,10 @@ int pkey_pm_new(EVP_PKEY *pk, EVP_PKEY *m_pkey)
     if (m_pkey) {
         struct pkey_pm *m_pkey_pm = (struct pkey_pm *)m_pkey->pkey_pm;
 
-        pkey_pm->ex_pkey = m_pkey_pm->pkey;
+        if (m_pkey_pm->ex_pkey)
+            pkey_pm->ex_pkey = m_pkey_pm->ex_pkey;
+        else
+            pkey_pm->ex_pkey = m_pkey_pm->pkey;
     }
 
     return 0;
