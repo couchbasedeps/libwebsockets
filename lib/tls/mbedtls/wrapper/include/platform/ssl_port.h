@@ -37,7 +37,13 @@ void *ssl_mem_zalloc(size_t size);
 #define ssl_speed_up_exit()
 
 #define SSL_DEBUG_FL
-#define SSL_DEBUG_LOG(fmt, ...) ESP_LOGI("openssl", fmt, ##__VA_ARGS__)
+
+#ifdef ESP_PLATFORM
+	#define SSL_DEBUG_LOG(fmt, ...) ESP_LOGI("openssl", fmt, ##__VA_ARGS__)
+#else
+	#define SSL_DEBUG_LOG(fmt, ...) ssl_debug_log(fmt, ##__VA_ARGS__)
+	void ssl_debug_log(const char *fmt, ...);
+#endif
 
 #ifdef __cplusplus
  }

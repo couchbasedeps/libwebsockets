@@ -277,3 +277,14 @@ lwsl_hexdump(const void *vbuf, size_t len)
 	lwsl_hexdump_level(LLL_DEBUG, vbuf, len);
 #endif
 }
+
+#ifdef LWS_WITH_MBEDTLS
+#include "ssl_port.h"
+void ssl_debug_log(const char *format, ...) {
+	va_list ap;
+
+	va_start(ap, format);
+	_lws_logv(LLL_NOTICE, format, ap);
+	va_end(ap);
+}
+#endif
